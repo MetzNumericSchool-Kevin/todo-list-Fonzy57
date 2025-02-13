@@ -1,67 +1,80 @@
-type TodoItem = {
-    id: number,
-    description: string
-    done: boolean
+import { useState } from "react";
+import TodoItem from "./todo/todo-item";
+
+export interface TodoItemProps {
+  id?: number;
+  description: string;
+  done: boolean;
 }
 
 export function TodoApp() {
-    return (
-        <>
-            <div className="flex">
+  const [tasks, setTasks] = useState<TodoItemProps[]>([
+    {
+      id: 1,
+      description: "Acheter des oranges",
+      done: false,
+    },
+    {
+      id: 2,
+      description: "Laver la voiture",
+      done: false,
+    },
+    {
+      id: 3,
+      description: "Apprendre Angular 2.0",
+      done: true,
+    },
+  ]);
+  const [taskTitle, setTaskTitle] = useState<string>("");
 
-                <label className="input input-bordered flex items-center gap-2">
-                    <input type="text" className="grow" placeholder="Ajouter une tâche" />
-                </label>
+  const handleAddTask = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    if (taskTitle !== "") {
+      const newTask: TodoItemProps = {
+        id: 1,
+        description: taskTitle,
+        done: false,
+      };
+      setTasks([...tasks, newTask]);
+      setTaskTitle("");
+    }
+  };
 
-                <button className="btn btn-primary">+</button>
+  const handleChangeTaskName = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    setTaskTitle(value);
+  };
 
-            </div>
+  return (
+    <>
+      <div className="flex">
+        <label className="input input-bordered flex items-center gap-2">
+          <input
+            type="text"
+            className="grow"
+            placeholder="Ajouter une tâche"
+            onChange={handleChangeTaskName}
+            value={taskTitle}
+          />
+        </label>
 
-            <div className="my-5 flex-column gap-5 w-full text-left">
-                {/* TODO ITEM version normal */}
-                <div className="bg-indigo-700 w-full m-5 rounded-box p-3 flex">
-                    <span className="pr-8">
-                        <input type="checkbox" className="checkbox" />
-                    </span>
-                    <span className="flex-grow">
-                        Acheter des oranges
-                    </span>
-                    <div>
-                        <button className="btn btn-error btn-outline btn-xs">
-                            X
-                        </button>
-                    </div>
-                </div>
+        <button className="btn btn-primary" onClick={handleAddTask}>
+          +
+        </button>
+      </div>
 
-                {/* TODO Item version cochée */}
-                <div className="bg-indigo-900 w-full m-5 rounded-box p-3 flex">
-                    <span className="pr-8">
-                        <input type="checkbox" checked={true} className="checkbox" />
-                    </span>
-                    <span className="flex-grow line-through">
-                        Courir avec le fraté
-                    </span>
-                    <div>
-                        <button className="btn btn-error btn-outline btn-xs">
-                            X
-                        </button>
-                    </div>
-                </div>
-
-                <div className="bg-indigo-900 w-full m-5 rounded-box p-3 flex">
-                    <span className="pr-8">
-                        <input type="checkbox" checked={true} className="checkbox" />
-                    </span>
-                    <span className="flex-grow line-through">
-                        Me faire défoncer à LoL
-                    </span>
-                    <div>
-                        <button className="btn btn-error btn-outline btn-xs">
-                            X
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </>
-    )
+      <div className="my-5 flex-column gap-5 w-full text-left">
+        {tasks.map((task, index) => {
+          return (
+            <TodoItem
+              key={index}
+              id={task.id}
+              description={task.description}
+              done={task.done}
+            />
+          );
+        })}
+      </div>
+    </>
+  );
 }
