@@ -10,17 +10,17 @@ export interface TodoItemProps {
 export function TodoApp() {
   const [tasks, setTasks] = useState<TodoItemProps[]>([
     {
-      id: 1,
+      id: Math.random(),
       description: "Acheter des oranges",
       done: false,
     },
     {
-      id: 2,
+      id: Math.random(),
       description: "Laver la voiture",
       done: false,
     },
     {
-      id: 3,
+      id: Math.random(),
       description: "Apprendre Angular 2.0",
       done: true,
     },
@@ -31,7 +31,7 @@ export function TodoApp() {
     event.preventDefault();
     if (taskTitle !== "") {
       const newTask: TodoItemProps = {
-        id: 1,
+        id: Math.random(),
         description: taskTitle,
         done: false,
       };
@@ -43,6 +43,18 @@ export function TodoApp() {
   const handleChangeTaskName = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     setTaskTitle(value);
+  };
+
+  const handleToggleTask = (id: number) => {
+    setTasks(
+      tasks.map((task) =>
+        task.id === id ? { ...task, done: !task.done } : task
+      )
+    );
+  };
+
+  const handleDeleteTask = (id: number) => {
+    setTasks(tasks.filter((task) => task.id !== id));
   };
 
   return (
@@ -64,16 +76,20 @@ export function TodoApp() {
       </div>
 
       <div className="my-5 flex-column gap-5 w-full text-left">
-        {tasks.map((task, index) => {
-          return (
-            <TodoItem
-              key={index}
-              id={task.id}
-              description={task.description}
-              done={task.done}
-            />
-          );
-        })}
+        {tasks
+          .sort((a, b) => Number(a.done) - Number(b.done))
+          .map((task, index) => {
+            return (
+              <TodoItem
+                key={index}
+                id={task.id}
+                description={task.description}
+                done={task.done}
+                onToggle={handleToggleTask}
+                onDelete={handleDeleteTask}
+              />
+            );
+          })}
       </div>
     </>
   );
